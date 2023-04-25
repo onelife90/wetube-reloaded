@@ -2,7 +2,6 @@ import Video from "../models/Video";
 
 export const home = async (req, res) => {
   const videos = await Video.find({});
-  console.log(videos);
   return res.render("home", { pageTitle: "Home", videos });
 };
 
@@ -24,9 +23,20 @@ export const getEdit = async (req, res) => {
   return res.render("edit", { pageTitle: `Edit:${video.title}`, video });
 };
 
-export const postEdit = (req, res) => {
+export const postEdit = async (req, res) => {
   const { id } = req.params;
-  const { title } = req.body;
+  const video = await Video.exists({ _id: id });
+  const { title, description, hashtags } = req.body;
+  if (!video) {
+    return res.render("404", { pageTitle: "Video not found." });
+  }
+  await Video.findByIdAndUpdate(id, {
+    title,
+    description,
+    hashtags: hashtags
+      .split(",")
+      .map((word) => (word.startsWith("#") ? word : `#${word}`)),
+  });
   return res.redirect(`/videos/${id}`);
 };
 
@@ -37,12 +47,12 @@ export const getUpload = (req, res) => {
 };
 
 export const postUpload = async (req, res) => {
-  const { title, description, hastags } = req.body;
+  const { title, description, hashtags } = req.body;
   try {
     await Video.create({
       title,
       description,
-      hashtags: hastags.split(",").map((word) => `#${word}`),
+      hashtags: hashtags.split(",").map((word) => `#${word}`),
     });
     return res.redirect("/");
   } catch (error) {
