@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import { deleteVideo } from "./controllers/videoController";
 
 mongoose.connect("mongodb://127.0.0.1:27017/wetube");
 
