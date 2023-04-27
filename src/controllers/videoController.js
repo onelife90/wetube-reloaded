@@ -52,6 +52,7 @@ export const postUpload = async (req, res) => {
     });
     return res.redirect("/");
   } catch (error) {
+    console.log(error);
     return res.render("upload", {
       pageTitle: "Upload video",
       errorMessage: error._message,
@@ -75,6 +76,5 @@ export const search = async (req, res) => {
       },
     });
   }
-  console.log();
   return res.render("search", { pageTitle: "Search", videos });
 };
