@@ -31,7 +31,7 @@ export const postJoin = async (req, res) => {
     });
     return res.redirect("/login");
   } catch (error) {
-    return res.status(400).render("/join", {
+    return res.status(400).render("join", {
       pageTitle,
       errorMessage: error._message,
     });
@@ -50,7 +50,7 @@ export const postLogin = async (req, res) => {
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
-      errorMessage: "An account with this username doed not exists.",
+      errorMessage: "An account with this username does not exists.",
     });
   }
   if (!ok) {
