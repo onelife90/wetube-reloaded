@@ -45,8 +45,8 @@ export const getLogin = (req, res) => {
 export const postLogin = async (req, res) => {
   const { username, password } = req.body;
   const pageTitle = "Login";
-  const user = await User.findOne({ username });
-  const ok = await bcrypt.compare(password, user.password);
+  const user = await User.findOne({ username, socialOnly: false });
+  const ok = bcrypt.compare(password, user.password);
   if (!user) {
     return res.status(400).render("login", {
       pageTitle,
@@ -115,13 +115,10 @@ export const finishGithubLogin = async (req, res) => {
     if (!emailObj) {
       return res.redirect("/login");
     }
-    const existingUser = await User.findOne({ email: emailObj.email });
-    if (existingUser) {
-      req.session.loggedIn = true;
-      req.session.user = existingUser;
-      return res.redirect("/");
-    } else {
-      const user = await User.create({
+    let socialEmailOnDB = await User.findOne({ email: emailObj.email });
+    if (!socialEmailOnDB) {
+      socialEmailOnDB = await User.create({
+        avatarUrl: userData.avatar_url,
         name: userData.name,
         username: userData.login,
         email: emailObj.email,
@@ -129,16 +126,18 @@ export const finishGithubLogin = async (req, res) => {
         password: "",
         location: userData.location,
       });
-      req.session.loggedIn = true;
-      req.session.user = user;
-      return res.redirect("/");
     }
+    req.session.loggedIn = true;
+    req.session.user = socialEmailOnDB;
+    return res.redirect("/");
   } else {
     return res.redirect("/login");
   }
 };
+export const logout = (req, res) => {
+  req.session.destroy();
+  return res.redirect("/");
+};
 
 export const edit = (req, res) => res.send("Edit User");
-export const remove = (req, res) => res.send("Remove User");
-export const logout = (req, res) => res.send("Log Out User");
 export const see = (req, res) => res.send("See User");
