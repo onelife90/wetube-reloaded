@@ -144,6 +144,8 @@ export const getEdit = (req, res) => {
 };
 
 export const postEdit = (req, res) => {
+  const { name, email, username, location } = req.body;
+  // User.f
   return res.send("NOT YET");
 };
 export const see = (req, res) => res.send("See User");
