@@ -1,3 +1,4 @@
+import session from "express-session";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 
@@ -143,9 +144,45 @@ export const getEdit = (req, res) => {
   return res.render("edit-profile", { pageTitle: "Edit Profile" });
 };
 
-export const postEdit = (req, res) => {
-  const { name, email, username, location } = req.body;
-  // User.f
-  return res.send("NOT YET");
+export const postEdit = async (req, res) => {
+  const {
+    session: {
+      user: { _id, email: sessionEmail, username: sessionUsername },
+    },
+    body: { name, email, username, location },
+  } = req;
+
+  let searchParams = [];
+  if (sessionEmail !== email) {
+    searchParams.push({ email });
+  }
+  if (sessionUsername !== username) {
+    searchParams.push({ username });
+  }
+  if (searchParams.length > 0) {
+    const findUser = await User.findOne({ $or: searchParams });
+    console.log(findUser);
+    if (findUser && findUser._id.toString() !== _id) {
+      return res.status(400).render("edit-profile", {
+        pageTitle: "Edit Profile",
+        errorMessage:
+          "This Username/E-mail already exists. Please choose another.",
+      });
+    }
+  }
+
+  const updateUser = await User.findByIdAndUpdate(
+    _id,
+    {
+      name,
+      email,
+      username,
+      location,
+    },
+    { new: true }
+  );
+  req.session.user = updateUser;
+  return res.redirect("/users/edit");
 };
+
 export const see = (req, res) => res.send("See User");
