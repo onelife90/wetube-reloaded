@@ -5,7 +5,10 @@ block content
     div
         p=video.description
         small=video.createdAt
-        //- h3 #{video.views} #{video.views <= 1 ? "view" :"views"}
-    a(href=`${video.id}/edit`) Edit Video &rarr;
-    br
-    a(href=`${video.id}/delete`) Delete Video &rarr;
+    div
+        small Uploaded by 
+        a(href=`/users/${owner._id.toString()}`)=owner.name
+    if (loggedInUser._id === video.owner.toString())
+        a(href=`${video.id}/edit`) Edit Video &rarr;
+        br
+        a(href=`${video.id}/delete`) Delete Video &rarr;
