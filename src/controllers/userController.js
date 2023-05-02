@@ -162,7 +162,6 @@ export const postEdit = async (req, res) => {
   }
   if (searchParams.length > 0) {
     const findUser = await User.findOne({ $or: searchParams });
-    console.log(findUser);
     if (findUser && findUser._id.toString() !== _id) {
       return res.status(400).render("users/edit-profile", {
         pageTitle: "Edit Profile",
@@ -229,14 +228,12 @@ export const see = async (req, res) => {
   const {
     params: { id },
   } = req;
-  const user = await User.findById(id);
+  const user = await User.findById(id).populate("videos");
   if (!user) {
     return res.status("404").render("404", { pageTitle: "User not found." });
   }
-  const videos = await Video.find({ owner: user._id });
   return res.render("users/profile", {
     pageTitle: user.name,
     user,
-    videos,
   });
 };
