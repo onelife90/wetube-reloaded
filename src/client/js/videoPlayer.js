@@ -13,25 +13,57 @@ const videoContainer = document.getElementById("videoContainer");
 const videoControls = document.getElementById("videoControls");
 
 let controlsTimeout = null;
-let controlsMoveTimeout = null;
 let volumeValue = 0.5;
 video.volume = volumeValue;
 
+// Common Function
+const formatTime = (seconds) =>
+  new Date(seconds * 1000).toISOString().substring(14, 19);
+const hideControls = () => videoControls.classList.remove("showing");
+
+// Handler Function
+const handleLoadedMetadata = () => {
+  totalTime.innerText = formatTime(Math.floor(video.duration));
+  timeline.max = Math.floor(video.duration);
+};
+
+const handleTimeUpdate = () => {
+  currentTime.innerText = formatTime(Math.floor(video.currentTime));
+  timeline.value = Math.floor(video.currentTime);
+};
+
+const handleMouseMove = () => {
+  if (controlsTimeout !== null) {
+    clearTimeout(controlsTimeout);
+    controlsTimeout = null;
+  }
+  videoControls.classList.add("showing");
+  controlsTimeout = setTimeout(hideControls, 3000);
+};
+
+const handleMouseLeave = () => {
+  controlsTimeout = setTimeout(hideControls, 3000);
+};
 const handlePlayClick = () => {
   video.paused ? video.play() : video.pause();
   playBtnIcon.classList = video.paused ? "fas fa-play" : "fas fa-pause";
 };
 
-const handleVolumeChange = (event) => {
-  const {
-    target: { value },
-  } = event;
-  if (video.muted) {
-    video.muted = false;
-    muteBtn.innerText = "Mute";
+const handleVideoClick = () => handlePlayClick();
+
+const handlekeyContol = (event) => {
+  if (event.keyCode === 32) {
+    handlePlayClick();
+    handleDetectMove();
+  } else if (event.keyCode === 39) {
+    video.currentTime += 10;
+    handleTimeUpdate();
+    handleDetectMove();
+  } else if (event.keyCode === 37) {
+    video.currentTime -= 10;
+    handleTimeUpdate();
+    handleDetectMove();
   }
-  volumeValue = value;
-  video.volume = value;
 };
 
 const handleMuteClick = () => {
@@ -42,17 +74,16 @@ const handleMuteClick = () => {
   volumeRange.value = video.muted ? 0 : volumeValue;
 };
 
-const formatTime = (seconds) =>
-  new Date(seconds * 1000).toISOString().substring(14, 19);
-
-const handleLoadedMetadata = () => {
-  totalTime.innerText = formatTime(Math.floor(video.duration));
-  timeline.max = Math.floor(video.duration);
-};
-
-const handleTimeUpdate = () => {
-  currentTime.innerText = formatTime(Math.floor(video.currentTime));
-  timeline.value = Math.floor(video.currentTime);
+const handleVolumeChange = (event) => {
+  const {
+    target: { value },
+  } = event;
+  if (video.muted) {
+    video.muted = false;
+    muteBtnIcon.classList = "fas fa-volume-up";
+  }
+  volumeValue = value;
+  video.volume = value;
 };
 
 const handleTimelineChange = (event) => {
@@ -73,32 +104,14 @@ const handleFullScreen = () => {
   }
 };
 
-const hideContorls = () => videoControls.classList.remove("showing");
-
-const handleMouseMove = () => {
-  if (controlsTimeout) {
-    clearTimeout(controlsTimeout);
-    controlsTimeout = null;
-  }
-  if (controlsMoveTimeout) {
-    clearTimeout(controlsMoveTimeout);
-    controlsMoveTimeout = null;
-  }
-  videoControls.classList.add("showing");
-  controlsMoveTimeout = setTimeout(hideContorls, 3000);
-  console.log(controlsMoveTimeout);
-};
-
-const handleMouseLeave = () => {
-  controlsTimeout = setTimeout(hideContorls, 3000);
-};
-
-playBtn.addEventListener("click", handlePlayClick);
-muteBtn.addEventListener("click", handleMuteClick);
-volumeRange.addEventListener("input", handleVolumeChange);
 video.addEventListener("loadeddata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate);
 videoContainer.addEventListener("mousemove", handleMouseMove);
 videoContainer.addEventListener("mouseleave", handleMouseLeave);
+playBtn.addEventListener("click", handlePlayClick);
+video.addEventListener("click", handleVideoClick);
+window.addEventListener("keydown", handlekeyContol);
+muteBtn.addEventListener("click", handleMuteClick);
+volumeRange.addEventListener("input", handleVolumeChange);
 timeline.addEventListener("input", handleTimelineChange);
 fullScreenBtn.addEventListener("click", handleFullScreen);
