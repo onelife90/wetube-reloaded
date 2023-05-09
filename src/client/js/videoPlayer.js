@@ -91,6 +91,7 @@ const handleTimelineChange = (event) => {
     target: { value },
   } = event;
   video.currentTime = value;
+  handleTimeUpdate();
 };
 
 const handleFullScreen = () => {
