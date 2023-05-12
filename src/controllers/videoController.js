@@ -2,19 +2,25 @@ import Video from "../models/Video";
 import User from "../models/User";
 
 export const home = async (req, res) => {
+  const {
+    session: { user },
+  } = req;
   const videos = await Video.find({})
     .sort({ createdAt: "desc" })
     .populate("owner");
-  return res.render("home", { pageTitle: "Home", videos });
+  return res.render("home", { pageTitle: "Home", videos, user });
 };
 
 export const watch = async (req, res) => {
-  const { id } = req.params;
+  const {
+    session: { user },
+    params: { id },
+  } = req;
   const video = await Video.findById(id).populate("owner");
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video });
+  return res.render("videos/watch", { pageTitle: video.title, video, user });
 };
 
 export const getEdit = async (req, res) => {
@@ -59,7 +65,10 @@ export const postEdit = async (req, res) => {
 };
 
 export const getUpload = (req, res) => {
-  return res.render("videos/upload", { pageTitle: "Upload video" });
+  const {
+    session: { user },
+  } = req;
+  return res.render("videos/upload", { pageTitle: "Upload video", user });
 };
 
 export const postUpload = async (req, res) => {
@@ -70,7 +79,6 @@ export const postUpload = async (req, res) => {
       user: { _id },
     },
   } = req;
-  console.log(thumb);
   try {
     const newVideo = await Video.create({
       title,
@@ -117,6 +125,9 @@ export const deleteVideo = async (req, res) => {
 };
 
 export const search = async (req, res) => {
+  const {
+    session: { user },
+  } = req;
   const { keyword } = req.query;
   let videos = [];
   if (keyword) {
@@ -126,7 +137,12 @@ export const search = async (req, res) => {
       },
     }).populate("owner");
   }
-  return res.render("videos/search", { pageTitle: "Search", keyword, videos });
+  return res.render("videos/search", {
+    pageTitle: "Search",
+    keyword,
+    videos,
+    user,
+  });
 };
 
 export const registerView = async (req, res) => {

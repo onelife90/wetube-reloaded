@@ -15,10 +15,13 @@ header
                     a(href="/users/logout") Log Out
                 li 
                     a(href=`/users/${loggedInUser._id}`)
-                        if !loggedInUser.avatarUrl
+                        if (!loggedInUser.avatarUrl)
                             span 😎 
                         else 
-                            img(src=`/${loggedInUser.avatarUrl}`).header__avatar
+                            if user.avatarUrl.includes("https://")
+                                img.header__avatar(src=user.avatarUrl, crossorigin)
+                            else
+                                img.header__avatar(src=`/${user.avatarUrl}`, crossorigin)
             else
                 li 
                     a(href="/login") Login
