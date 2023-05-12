@@ -18,10 +18,10 @@ header
                         if (!loggedInUser.avatarUrl)
                             span 😎 
                         else 
-                            if user.avatarUrl.includes("https://")
-                                img.header__avatar(src=user.avatarUrl, crossorigin)
+                            if loggedInUser.avatarUrl.includes("https://")
+                                img.header__avatar(src=loggedInUser.avatarUrl, crossorigin)
                             else
-                                img.header__avatar(src=`/${user.avatarUrl}`, crossorigin)
+                                img.header__avatar(src=`/${loggedInUser.avatarUrl}`)
             else
                 li 
                     a(href="/login") Login

@@ -2,25 +2,21 @@ import Video from "../models/Video";
 import User from "../models/User";
 
 export const home = async (req, res) => {
-  const {
-    session: { user },
-  } = req;
   const videos = await Video.find({})
     .sort({ createdAt: "desc" })
     .populate("owner");
-  return res.render("home", { pageTitle: "Home", videos, user });
+  return res.render("home", { pageTitle: "Home", videos });
 };
 
 export const watch = async (req, res) => {
   const {
-    session: { user },
     params: { id },
   } = req;
   const video = await Video.findById(id).populate("owner");
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video, user });
+  return res.render("videos/watch", { pageTitle: video.title, video });
 };
 
 export const getEdit = async (req, res) => {
@@ -65,16 +61,14 @@ export const postEdit = async (req, res) => {
 };
 
 export const getUpload = (req, res) => {
-  const {
-    session: { user },
-  } = req;
-  return res.render("videos/upload", { pageTitle: "Upload video", user });
+  return res.render("videos/upload", { pageTitle: "Upload video" });
 };
 
 export const postUpload = async (req, res) => {
   const {
     body: { title, description, hashtags },
     files: { video, thumb },
+    session: { user },
     session: {
       user: { _id },
     },
@@ -89,6 +83,7 @@ export const postUpload = async (req, res) => {
       hashtags: Video.formatHashtags(hashtags),
     });
     const user = await User.findById(_id);
+    console.log(user);
     user.videos.push(newVideo._id);
     user.save();
     return res.redirect("/");
@@ -125,9 +120,6 @@ export const deleteVideo = async (req, res) => {
 };
 
 export const search = async (req, res) => {
-  const {
-    session: { user },
-  } = req;
   const { keyword } = req.query;
   let videos = [];
   if (keyword) {
@@ -141,7 +133,6 @@ export const search = async (req, res) => {
     pageTitle: "Search",
     keyword,
     videos,
-    user,
   });
 };
 
