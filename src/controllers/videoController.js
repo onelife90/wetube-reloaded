@@ -1,5 +1,6 @@
 import Video from "../models/Video";
 import User from "../models/User";
+import moment from "moment";
 
 export const home = async (req, res) => {
   const videos = await Video.find({})
@@ -13,10 +14,26 @@ export const watch = async (req, res) => {
     params: { id },
   } = req;
   const video = await Video.findById(id).populate("owner");
+  const getDate = () => {
+    const createdAt = video.createdAt;
+    const year = createdAt.getFullYear();
+    const month = (createdAt.getMonth() + 1).toString().padStart(2, "0");
+    const date = createdAt.getDate().toString().padStart(2, "0");
+    const hours = createdAt.getHours().toString().padStart(2, "0");
+    const minutes = createdAt.getMinutes().toString().padStart(2, "0");
+    const seconds = createdAt.getSeconds().toString().padStart(2, "0");
+
+    return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+  };
+  const koreanDate = getDate();
   if (!video) {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-  return res.render("videos/watch", { pageTitle: video.title, video });
+  return res.render("videos/watch", {
+    pageTitle: video.title,
+    video,
+    koreanDate,
+  });
 };
 
 export const getEdit = async (req, res) => {
@@ -68,11 +85,11 @@ export const postUpload = async (req, res) => {
   const {
     body: { title, description, hashtags },
     files: { video, thumb },
-    session: { user },
     session: {
       user: { _id },
     },
   } = req;
+
   try {
     const newVideo = await Video.create({
       title,
@@ -83,7 +100,6 @@ export const postUpload = async (req, res) => {
       hashtags: Video.formatHashtags(hashtags),
     });
     const user = await User.findById(_id);
-    console.log(user);
     user.videos.push(newVideo._id);
     user.save();
     return res.redirect("/");
@@ -109,8 +125,6 @@ export const deleteVideo = async (req, res) => {
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
   if (String(video.owner) !== String(_id)) {
-    console.log(video.owner);
-    console.log(_id);
     return res.status(403).redirect("/");
   }
   await Video.findByIdAndDelete(id);

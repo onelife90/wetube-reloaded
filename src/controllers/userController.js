@@ -136,14 +136,12 @@ export const finishGithubLogin = async (req, res) => {
   }
 };
 export const logout = (req, res) => {
+  req.session.destroy();
   return res.redirect("/");
 };
 
 export const getEdit = (req, res) => {
-  const {
-    session: { user },
-  } = req;
-  return res.render("users/edit-profile", { pageTitle: "Edit Profile", user });
+  return res.render("users/edit-profile", { pageTitle: "Edit Profile" });
 };
 
 export const postEdit = async (req, res) => {
@@ -190,6 +188,7 @@ export const postEdit = async (req, res) => {
 
 export const getChangePassword = (req, res) => {
   if (req.session.user.socialOnly === true) {
+    return res.redirect("/");
   }
   return res.render("users/change-password", { pageTitle: "Change Password" });
 };

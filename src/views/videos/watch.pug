@@ -18,16 +18,25 @@ block content
                     i.fas.fa-volume-up
                 span#fullScreen 
                     i.fas.fa-expand
-    //- div
-    //-     p=video.description
-    //-     small=video.createdAt
-    //- div
-    //-     small Uploaded by 
-    //-         a(href=`/users/${video.owner._id.toString()}`)=video.owner.name
-    //- if (String(loggedInUser._id) === String(video.owner._id))
-    //-     a(href=`${video.id}/edit`) Edit Video &rarr;
-    //-     br
-    //-     a(href=`${video.id}/delete`) Delete Video &rarr;
+    div.videoInfo
+        p.videoInfo__title=video.title
+        small=koreanDate
+    div.videoOwnerInfo
+        if !video.owner.avatarUrl
+            span.none-avatar 😎 
+        else
+            if video.owner.avatarUrl.includes("https://")
+                a(href=`/users/${video.owner._id.toString()}`)
+                    img.videoOwnerInfo__avatar(src=video.owner.avatarUrl, crossorigin)
+            else 
+                a(href=`/users/${video.owner._id.toString()}`)
+                    img.videoOwnerInfo__avatar(src=`/${video.owner.avatarUrl}`)
+        small Uploaded by 
+            a.videoOwnerInfo__name(href=`/users/${video.owner._id.toString()}`)=video.owner.name
+    div.onlyOwnerTab
+        if (String(loggedInUser._id) === String(video.owner._id))
+            a.editVideo(href=`${video.id}/edit`) Edit Video &rarr;
+            a.deleteVideo(href=`${video.id}/delete`) Delete Video &rarr;
 
 block scripts 
     script(src="/static/js/videoPlayer.js")

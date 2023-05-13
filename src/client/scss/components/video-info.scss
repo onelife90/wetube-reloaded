@@ -1,0 +1,41 @@
+.videoInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  .videoInfo__title {
+    font-size: 20px;
+  }
+}
+
+.videoOwnerInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+  .none-avatar {
+    font-size: 25px;
+  }
+  .videoOwnerInfo__avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .videoOwnerInfo__name {
+    color: gold;
+  }
+}
+
+.onlyOwnerTab {
+  margin-left: 40px;
+  justify-content: space-between;
+  a {
+    display: block;
+    width: 120px;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .editVideo {
+    margin-bottom: 5px;
+  }
+}
