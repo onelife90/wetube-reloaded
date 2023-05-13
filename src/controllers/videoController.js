@@ -1,6 +1,5 @@
 import Video from "../models/Video";
 import User from "../models/User";
-import moment from "moment";
 
 export const home = async (req, res) => {
   const videos = await Video.find({})
@@ -14,6 +13,10 @@ export const watch = async (req, res) => {
     params: { id },
   } = req;
   const video = await Video.findById(id).populate("owner");
+  if (!video) {
+    req.flash("error", "Video not found.");
+    return res.status(404).render("404", { pageTitle: "Video not found." });
+  }
   const getDate = () => {
     const createdAt = video.createdAt;
     const year = createdAt.getFullYear();
@@ -26,9 +29,6 @@ export const watch = async (req, res) => {
     return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
   };
   const koreanDate = getDate();
-  if (!video) {
-    return res.status(404).render("404", { pageTitle: "Video not found." });
-  }
   return res.render("videos/watch", {
     pageTitle: video.title,
     video,
@@ -50,7 +50,10 @@ export const getEdit = async (req, res) => {
   if (String(video.owner) !== String(_id)) {
     return res.status(403).redirect("/");
   }
-  return res.render("videos/edit", { pageTitle: `Edit:${video.title}`, video });
+  return res.render("videos/edit", {
+    pageTitle: `Edit: ${video.title}`,
+    video,
+  });
 };
 
 export const postEdit = async (req, res) => {
@@ -104,10 +107,10 @@ export const postUpload = async (req, res) => {
     user.save();
     return res.redirect("/");
   } catch (error) {
-    return res.status(400).render("videos/upload", {
-      pageTitle: "Upload video",
-      errorMessage: error._message,
-    });
+    req.flash("error", error._message);
+    return res
+      .status(400)
+      .render("videos/upload", { pageTitle: "Upload video" });
   }
 };
 
@@ -122,6 +125,7 @@ export const deleteVideo = async (req, res) => {
   const user = await User.findById(_id);
 
   if (!video) {
+    req.flash("error", "Video not found.");
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
   if (String(video.owner) !== String(_id)) {

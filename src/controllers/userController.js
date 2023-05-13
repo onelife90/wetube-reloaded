@@ -1,4 +1,3 @@
-import Video from "../models/Video";
 import User from "../models/User";
 import bcrypt from "bcrypt";
 
@@ -10,17 +9,13 @@ export const postJoin = async (req, res) => {
   const { email, username, password, password2, name, location } = req.body;
   const pageTitle = "Join";
   if (password !== password2) {
-    res.status(400).render("users/join", {
-      pageTitle,
-      errorMessage: "Password confirmation does not match.",
-    });
+    req.flash("error", "Password confirmation does not match.");
+    res.status(400).render("users/join", { pageTitle });
   }
   const exists = await User.exists({ $or: [{ username }, { email }] });
   if (exists) {
-    res.status(400).render("users/join", {
-      pageTitle,
-      errorMessage: "This username/email is already taken.",
-    });
+    req.flash("error", "This username/email is already taken.");
+    res.status(400).render("users/join", { pageTitle });
   }
   try {
     await User.create({
@@ -32,10 +27,8 @@ export const postJoin = async (req, res) => {
     });
     return res.redirect("/login");
   } catch (error) {
-    return res.status(400).render("users/join", {
-      pageTitle,
-      errorMessage: error._message,
-    });
+    req.flash("error", error._message);
+    return res.status(400).render("users/join", { pageTitle });
   }
 };
 
@@ -48,17 +41,13 @@ export const postLogin = async (req, res) => {
   const pageTitle = "Login";
   const user = await User.findOne({ username, socialOnly: false });
   if (!user) {
-    return res.status(400).render("users/login", {
-      pageTitle,
-      errorMessage: "An account with this username does not exists.",
-    });
+    req.flash("error", "An account with this username does not exists.");
+    return res.status(400).render("users/login", { pageTitle });
   }
   const ok = await bcrypt.compare(password, user.password);
   if (!ok) {
-    return res.status(400).render("users/login", {
-      pageTitle,
-      errorMessage: "Wrong password",
-    });
+    req.flash("error", "Wrong password.");
+    return res.status(400).render("users/login", { pageTitle });
   }
   req.session.loggedIn = true;
   req.session.user = user;
@@ -163,11 +152,13 @@ export const postEdit = async (req, res) => {
   if (searchParams.length > 0) {
     const findUser = await User.findOne({ $or: searchParams });
     if (findUser && findUser._id.toString() !== _id) {
-      return res.status(400).render("users/edit-profile", {
-        pageTitle: "Edit Profile",
-        errorMessage:
-          "This Username/E-mail already exists. Please choose another.",
-      });
+      req.flash(
+        "error",
+        "This Username/E-mail already exists. Please choose another."
+      );
+      return res
+        .status(400)
+        .render("users/edit-profile", { pageTitle: "Edit Profile" });
     }
   }
 
@@ -204,22 +195,16 @@ export const postChangePassword = async (req, res) => {
   const user = await User.findById(_id);
   const ok = await bcrypt.compare(oldPassword, user.password);
   if (!ok) {
-    return res.status(400).render("users/change-password", {
-      pageTitle,
-      errorMessage: "The current password incorrect.",
-    });
+    req.flash("error", "The current password incorrect.");
+    return res.status(400).render("users/change-password", { pageTitle });
   }
   if (oldPassword === newPassword) {
-    return res.status(400).render("users/change-password", {
-      pageTitle,
-      errorMessage: "The Old Password is same as New Password.",
-    });
+    req.flash("error", "The Old Password is same as New Password.");
+    return res.status(400).render("users/change-password", { pageTitle });
   }
   if (newPassword !== newPassword1) {
-    return res.status(400).render("users/change-password", {
-      pageTitle,
-      errorMessage: "The password does not match the confirmation.",
-    });
+    req.flash("error", "The password does not match the confirmation.");
+    return res.status(400).render("users/change-password", { pageTitle });
   }
   user.password = newPassword;
   await user.save();
@@ -238,6 +223,7 @@ export const see = async (req, res) => {
     },
   });
   if (!user) {
+    req.flash("error", "User not found.");
     return res.status("404").render("404", { pageTitle: "User not found." });
   }
   return res.render("users/profile", {
