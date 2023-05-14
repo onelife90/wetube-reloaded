@@ -18,9 +18,11 @@ block content
                     i.fas.fa-volume-up
                 span#fullScreen 
                     i.fas.fa-expand
+
     div.videoInfo
         p.videoInfo__title=video.title
-        small=koreanDate
+        small=krDate
+    
     div.videoOwnerInfo
         if !video.owner.avatarUrl
             span.none-avatar 😎 
@@ -33,14 +35,17 @@ block content
                     img.videoOwnerInfo__avatar(src=`/${video.owner.avatarUrl}`)
         small Uploaded by 
             a.videoOwnerInfo__name(href=`/users/${video.owner._id.toString()}`)=video.owner.name
+    
     div.onlyOwnerTab
         if (String(loggedInUser._id) === String(video.owner._id))
             a.editVideo(href=`${video.id}/edit`) Edit Video &rarr;
             a.deleteVideo(href=`${video.id}/delete`) Delete Video &rarr;
-    div.video__comments
-        form.video__comment-form#commentForm
-            textarea#textarea(cols="30" rows="10" placeholder="Write a nice comment...")
-            button Add Comment
+
+    if loggedIn
+        div.video__comments
+            form.video__comment-form#commentForm
+                textarea#textarea(cols="30" rows="10" placeholder="Write a nice comment...")
+                button Add Comment
 
 block scripts 
     script(src="/static/js/videoPlayer.js")
