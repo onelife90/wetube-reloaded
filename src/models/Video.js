@@ -1,4 +1,3 @@
-import moment from "moment-timezone";
 import mongoose from "mongoose";
 
 const videoSchema = new mongoose.Schema({
@@ -6,11 +5,7 @@ const videoSchema = new mongoose.Schema({
   thumbUrl: { type: String, required: true },
   title: { type: String, required: true, trim: true, maxLength: 80 },
   description: { type: String, required: true, trim: true },
-  createdAt: {
-    type: Date,
-    required: true,
-    default: () => moment().tz("Asia/Seoul").format(),
-  },
+  createdAt: { type: Date, required: true, default: Date.now },
   hashtags: [{ type: String, trim: true }],
   meta: {
     views: { type: Number, default: 0, required: true },

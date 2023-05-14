@@ -2,14 +2,10 @@ import Video from "../models/Video";
 import User from "../models/User";
 import Comment from "../models/Comment";
 
-const getDate = (createdAt) => {
-  const year = createdAt.getFullYear();
-  const month = (createdAt.getMonth() + 1).toString().padStart(2, "0");
-  const date = createdAt.getDate().toString().padStart(2, "0");
-  const hours = createdAt.getHours().toString().padStart(2, "0");
-  const minutes = createdAt.getMinutes().toString().padStart(2, "0");
-  const seconds = createdAt.getSeconds().toString().padStart(2, "0");
-  return `${year}-${month}-${date} ${hours}:${minutes}:${seconds}`;
+const getKrDate = (createdAt) => {
+  const date = createdAt.toLocaleDateString("ko-kr");
+  const time = createdAt.toLocaleTimeString("en-US", { hour12: false });
+  return `${date} ${time}`;
 };
 
 export const home = async (req, res) => {
@@ -28,11 +24,11 @@ export const watch = async (req, res) => {
     req.flash("error", "Video not found.");
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-  const koreanDate = getDate(video.createdAt);
+  const krDate = getKrDate(video.createdAt);
   return res.render("videos/watch", {
     pageTitle: video.title,
     video,
-    koreanDate,
+    krDate,
   });
 };
 
