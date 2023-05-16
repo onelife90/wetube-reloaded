@@ -17,19 +17,20 @@ export const home = async (req, res) => {
 };
 
 export const watch = async (req, res) => {
-  const {
-    params: { id },
-  } = req;
-  const video = await Video.findById(id).populate("owner");
+  const { id } = req.params;
+  const video = await Video.findById(id)
+    .populate("owner")
+    .populate({ path: "comments", populate: { path: "owner" } });
+
   if (!video) {
     req.flash("error", "Video not found.");
     return res.status(404).render("404", { pageTitle: "Video not found." });
   }
-  const krDate = getKrDate(video.createdAt);
+  const videoCreatedAt = getKrDate(video.createdAt);
   return res.render("videos/watch", {
     pageTitle: video.title,
     video,
-    krDate,
+    videoCreatedAt,
   });
 };
 
@@ -177,5 +178,7 @@ export const createComment = async (req, res) => {
     owner: user._id,
     video: id,
   });
+  video.comments.push(comment._id);
+  video.save();
   return res.sendStatus(201);
 };

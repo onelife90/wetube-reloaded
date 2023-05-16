@@ -1,0 +1,75 @@
+.videoInfo {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  .videoInfo__title {
+    font-size: 20px;
+  }
+}
+
+.videoOwnerInfo {
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+  .none-avatar {
+    font-size: 25px;
+  }
+  .videoOwnerInfo__avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  .videoOwnerInfo__name {
+    color: gold;
+  }
+}
+
+.onlyOwnerTab {
+  margin-left: 40px;
+  justify-content: space-between;
+  a {
+    display: block;
+    width: 120px;
+    flex-direction: column;
+    font-size: 15px;
+  }
+  .editVideo {
+    margin-bottom: 5px;
+  }
+}
+
+.video__comments {
+  display: flex;
+  flex-direction: column;
+  max-width: 420px;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 20px;
+  .vieo__comment--owner-info {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    .video__comment--avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+    span {
+      font-size: 30px;
+    }
+    .video__comment--createdAt {
+      font-size: 15px;
+      margin-bottom: 5px;
+      margin-right: 10px;
+    }
+  }
+  .video__comment {
+    padding: 10px;
+    border-radius: 9999px;
+    background-color: white;
+    color: black;
+    margin-bottom: 10px;
+  }
+}
