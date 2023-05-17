@@ -179,5 +179,30 @@ export const createComment = async (req, res) => {
   });
   video.comments.push(comment._id);
   video.save();
-  return res.sendStatus(201);
+  return res.status(201).json({ newCommentId: comment._id });
+};
+
+export const deleteComment = async (req, res) => {
+  const {
+    params: { id },
+    session: { user },
+  } = req;
+  const comment = await Comment.findById(id).populate("owner");
+  if (!comment) {
+    req.flash("error", "Comment not found.");
+    return res.sendStatus(404);
+  }
+  if (String(user._id) !== String(comment.owner._id)) {
+    req.flash("error", "Commenter and User do not match.");
+    return res.sendStatus(404);
+  }
+  const video = await Video.findById(String(comment.video._id));
+  if (!video) {
+    req.flash("error", "Video not found.");
+    return res.sendStatus(404);
+  }
+  video.comments.splice(video.comments.indexOf(id), 1);
+  await video.save();
+  await Comment.findByIdAndDelete(id);
+  return res.sendStatus(200);
 };

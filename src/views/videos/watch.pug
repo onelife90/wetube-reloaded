@@ -50,7 +50,7 @@ block content
     div.video__comments
         ul
             each comment in video.comments.reverse()
-                div.video__commenterInfo(data-id=comment.owner._id)
+                div.video__commenterInfo(data-commenter=comment.owner._id)
                     a.video__commenter(href=`/users/${comment.owner._id}`)
                         if !comment.owner.avatarUrl
                             span 😋
