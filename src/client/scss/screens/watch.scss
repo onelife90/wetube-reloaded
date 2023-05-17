@@ -47,11 +47,11 @@
   width: 100%;
   margin: 0 auto;
   margin-top: 20px;
-  .vieo__comment--owner-info {
+  .video__commenterInfo {
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    .video__comment--avatar {
+    .video__commenter-avatar {
       width: 40px;
       height: 40px;
       border-radius: 50%;
@@ -59,7 +59,7 @@
     span {
       font-size: 30px;
     }
-    .video__comment--createdAt {
+    .video__comment-createdAt {
       font-size: 15px;
       margin-bottom: 5px;
       margin-right: 10px;

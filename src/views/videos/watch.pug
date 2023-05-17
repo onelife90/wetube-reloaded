@@ -42,7 +42,7 @@ block content
             a.deleteVideo(href=`${video.id}/delete`) Delete Video &rarr;
 
     if loggedIn
-        div.video__add-comments
+        div.video__add-comments(data-avatar=loggedInUser.avatarUrl)
             form.video__comment-form#commentForm
                 textarea#textarea(cols="30" rows="10" placeholder="Write a nice comment...")
                 button Add Comment
@@ -50,17 +50,19 @@ block content
     div.video__comments
         ul
             each comment in video.comments.reverse()
-                div.vieo__comment--owner-info
-                    a(href=`/users/${comment.owner._id}`)
+                div.video__commenterInfo
+                    a.video__commenter(href=`/users/${comment.owner._id}`)(data-profile=loggedInUser._id)
                         if !comment.owner.avatarUrl
                             span 😋
                         else
                             if comment.owner.avatarUrl.includes("https://")
-                                img.video__comment--avatar(src=comment.owner.avatarUrl, crossorigin)
+                                img.video__commenter-avatar(src=comment.owner.avatarUrl, crossorigin)
                             else
-                                img.video__comment--avatar(src=`/${comment.owner.avatarUrl}`)
-                    small.video__comment--createdAt=`${comment.createdAt.toLocaleDateString("ko-kr")} ${comment.createdAt.toLocaleTimeString("en-US", { hour12: false })}` 
-                li.video__comment=comment.text
+                                img.video__commenter-avatar(src=`/${comment.owner.avatarUrl}`)
+                    small.video__comment-createdAt=`${comment.createdAt.toLocaleDateString("ko-kr")} ${comment.createdAt.toLocaleTimeString("en-US", { hour12: false })}` 
+                li.video__comment
+                    span=comment.text
+
 block scripts 
     script(src="/static/js/videoPlayer.js")
     if loggedIn
