@@ -50,8 +50,8 @@ block content
     div.video__comments
         ul
             each comment in video.comments.reverse()
-                div.video__commenterInfo
-                    a.video__commenter(href=`/users/${comment.owner._id}`)(data-profile=loggedInUser._id)
+                div.video__commenterInfo(data-id=comment.owner._id)
+                    a.video__commenter(href=`/users/${comment.owner._id}`)
                         if !comment.owner.avatarUrl
                             span 😋
                         else
@@ -60,8 +60,10 @@ block content
                             else
                                 img.video__commenter-avatar(src=`/${comment.owner.avatarUrl}`)
                     small.video__comment-createdAt=`${comment.createdAt.toLocaleDateString("ko-kr")} ${comment.createdAt.toLocaleTimeString("en-US", { hour12: false })}` 
-                li.video__comment
+                li.video__comment(data-id=comment.id)
                     span=comment.text
+                    if (String(loggedInUser._id) === String(comment.owner._id))
+                        span.delete__comment ❌ 
 
 block scripts 
     script(src="/static/js/videoPlayer.js")

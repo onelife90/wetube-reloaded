@@ -66,6 +66,9 @@
     }
   }
   .video__comment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 10px;
     border-radius: 9999px;
     background-color: white;

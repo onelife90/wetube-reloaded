@@ -2,14 +2,14 @@ const videoContainer = document.getElementById("videoContainer");
 const commentForm = document.getElementById("commentForm");
 const videoAddComments = document.querySelector(".video__add-comments");
 
-const addComment = (text) => {
+const addComment = (text, commentId) => {
   const videoComments = document.querySelector(".video__comments ul");
   const newCommentOwnerInfo = document.createElement("div");
   newCommentOwnerInfo.className = "video__commenterInfo";
 
   const commenter = document.createElement("a");
   commenter.className = "video__commenter";
-  commenter.setAttribute("href", `/users/${commenter.dataset.profile}`);
+  commenter.setAttribute("href", `/users/${newCommentOwnerInfo.dataset.id}`);
   videoComments.appendChild(commenter);
 
   const loggedInAvatar = videoAddComments.dataset.avatar;
@@ -40,10 +40,17 @@ const addComment = (text) => {
 
   const newComment = document.createElement("li");
   newComment.className = "video__comment";
+  newComment.dataset.id = commentId;
+  videoComments.appendChild(newComment);
 
   const span = document.createElement("span");
   span.innerText = text;
   newComment.appendChild(span);
+
+  const span2 = document.createElement("span");
+  span2.className = "delete__comment";
+  span2.innerText = `❌`;
+  newComment.appendChild(span2);
 
   videoComments.prepend(newComment);
   videoComments.prepend(newCommentOwnerInfo);
@@ -62,9 +69,10 @@ const handleSubmit = async (event) => {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text }),
   });
-  textarea.value = "";
   if (response.status === 201) {
-    addComment(text);
+    textarea.value = "";
+    const { newCommentId } = await response.json();
+    addComment(text, newCommentId);
   }
 };
 
