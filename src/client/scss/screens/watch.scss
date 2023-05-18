@@ -40,6 +40,18 @@
   }
 }
 
+.video__comment-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  textarea {
+    border-radius: 5px;
+    background-color: whitesmoke;
+  }
+  button {
+  }
+}
+
 .video__comments {
   display: flex;
   flex-direction: column;
