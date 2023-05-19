@@ -3,13 +3,10 @@ include ../mixins/video
 
 block content
     div.profile__data
-        if !loggedInUser.avatarUrl
+        if (!loggedInUser.avatarUrl)
             span.none-avatar 😎 
         else 
-            if loggedInUser.avatarUrl.includes("https://")
-                img.avatar(src=loggedInUser.avatarUrl, crossorigin)
-            else
-                img.avatar(src=`/${loggedInUser.avatarUrl}`)
+            img.avatar(src=loggedInUser.avatarUrl, crossorigin)
         h3=user.name
     div.video__grid
         each video in user.videos
