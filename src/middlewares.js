@@ -10,16 +10,35 @@ const s3 = new S3Client({
   },
 });
 
-const multerUploader = multerS3({
+const isFly = process.env.NODE_ENV === "production";
+
+const s3ImageUploader = multerS3({
   s3: s3,
   bucket: "wetube-4567",
   acl: "public-read",
+  key: function (req, file, callback) {
+    const newFilename = `${Date.now()}-${file.originalname}`;
+    const fullPath = `imgaes/${newFilename}`;
+    callback(null, fullPath);
+  },
+});
+
+const s3VideoUploader = multerS3({
+  s3: s3,
+  bucket: "wetube-4567",
+  acl: "public-read",
+  key: function (req, file, callback) {
+    const newFilename = `${Date.now()}-${file.originalname}`;
+    const fullPath = `videos/${newFilename}`;
+    callback(null, fullPath);
+  },
 });
 
 export const localsMiddleware = (req, res, next) => {
   res.locals.loggedIn = Boolean(req.session.loggedIn);
   res.locals.siteName = "Wetube";
   res.locals.loggedInUser = req.session.user || {};
+  res.locals.isFly = isFly;
   next();
 };
 
@@ -44,11 +63,11 @@ export const publicOnlyMiddleware = (req, res, next) => {
 export const avatarUploadMiddleware = multer({
   dest: "uploads/avatars/",
   limits: { fileSize: 3000000 },
-  storage: multerUploader,
+  storage: isFly ? s3ImageUploader : undefined,
 });
 
 export const videoUploadMiddleware = multer({
   dest: "uploads/videos/",
   limits: { fileSize: 10000000 },
-  storage: multerUploader,
+  storage: isFly ? s3VideoUploader : undefined,
 });

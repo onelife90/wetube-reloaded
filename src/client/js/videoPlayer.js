@@ -122,6 +122,10 @@ const handleVideoEnded = () => {
   });
 };
 
+if (video) {
+  handleLoadedMetadata();
+}
+
 video.addEventListener("loadeddata", handleLoadedMetadata);
 video.addEventListener("timeupdate", handleTimeUpdate);
 videoContainer.addEventListener("mousemove", handleMouseMove);

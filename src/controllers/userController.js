@@ -161,10 +161,11 @@ export const postEdit = async (req, res) => {
         .render("users/edit-profile", { pageTitle: "Edit Profile" });
     }
   }
+  const isFly = process.env.NODE_ENV === "production";
   const updateUser = await User.findByIdAndUpdate(
     _id,
     {
-      avatarUrl: file ? file.location : avatarUrl,
+      avatarUrl: file ? (isFly ? file.location : file.path) : avatarUrl,
       name,
       email,
       username,

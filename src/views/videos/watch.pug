@@ -30,9 +30,13 @@ block content
             if video.owner.avatarUrl.includes("github")
                 a(href=`/users/${video.owner._id.toString()}`)
                     img.videoOwnerInfo__avatar(src=video.owner.avatarUrl, crossorigin)
-            else 
+            else if video.owner.avatarUrl.includes("amazonaws")
                 a(href=`/users/${video.owner._id.toString()}`)
                     img.videoOwnerInfo__avatar(src=video.owner.avatarUrl, crossorigin)
+            else
+                a(href=`/users/${video.owner._id.toString()}`)
+                    img.videoOwnerInfo__avatar(src=`/${video.owner.avatarUrl}`)
+
         small Uploaded by 
             a.videoOwnerInfo__name(href=`/users/${video.owner._id.toString()}`)=video.owner.name
     
