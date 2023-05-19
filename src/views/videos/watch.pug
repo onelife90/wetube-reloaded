@@ -2,7 +2,7 @@ extends ../base
 
 block content
     div#videoContainer(data-id=video._id)
-        video(src=`/${video.fileUrl}`)
+        video(src=video.fileUrl)
         div#videoControls.videoControls
             div.videoControls__play
                 span#play.videoControls__playBtn
@@ -27,12 +27,12 @@ block content
         if !video.owner.avatarUrl
             span.none-avatar 😎 
         else
-            if video.owner.avatarUrl.includes("https://")
+            if video.owner.avatarUrl.includes("github")
                 a(href=`/users/${video.owner._id.toString()}`)
                     img.videoOwnerInfo__avatar(src=video.owner.avatarUrl, crossorigin)
             else 
                 a(href=`/users/${video.owner._id.toString()}`)
-                    img.videoOwnerInfo__avatar(src=`/${video.owner.avatarUrl}`)
+                    img.videoOwnerInfo__avatar(src=video.owner.avatarUrl, crossorigin)
         small Uploaded by 
             a.videoOwnerInfo__name(href=`/users/${video.owner._id.toString()}`)=video.owner.name
     
