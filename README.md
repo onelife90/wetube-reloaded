@@ -41,6 +41,15 @@
 </div>
 <br>
 <br>
+
+<div align=center>
+    <h1>🎬 Client Video Recorder 🎬</h1>
+</div>
+<section>
+    <div align=center>
+        <img src="https://user-images.githubusercontent.com/64455878/259903790-55d99597-d3f7-4223-8681-5c34f41292d5.GIF" />
+</section>
+<br>
 <br>
 
 <div align=center>
